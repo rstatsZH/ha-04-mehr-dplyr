@@ -19,14 +19,12 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(nycflights13)  
 library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
 
 ```
 
-# Lade Daten
-
-```{r}
-
-```
 
 # Tastaturkürzel
 
@@ -38,7 +36,7 @@ Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
 - **Die Pipe (%>%):** Ctrl + Shift + M
 - **Der Zuweisungs-Operator (<-)**: Alt + -
 
-# Daten erkunden
+# Daten 
 
 ## Daten: nycflights
 
@@ -48,11 +46,109 @@ Nutze die dir bekannten Funktionen um die Daten zu erkunden.
 
 ```
 
-## Daten: lernende
+## Daten: Übersicht über alle Lernenden im Kanton Zürich
+
+Ein Datensatz publiziert von der [Bildungsstatitik Kanton Zürich](https://pub.bista.zh.ch/de/). Der Datensatz ist öffentlich [auf opendata.swiss verfügbar](https://opendata.swiss/de/dataset/ubersicht-uber-alle-lernenden-im-kanton-zurich) und wir auch auf einer Seite der Bildungsstatistik selbst mit [Visualisierungen dargestellt](https://pub.bista.zh.ch/de/zahlen-und-fakten/sdl/uebersicht-ueber-alle-lernenden/auswertungen-in-absoluten-zahlen/.
+
+# Übungen
+
+## Übung 1 - Daten Importieren
+
+Ich habe die Daten für dich bereits importiert, auf das Jahr 2019 eingeschränkt und die NAs entfernt. Wir werden in allen Übungen ab Übung 2 mit dem Objekt `lernende2019` arbeiten.
+
+1. Führe den Code-chunk mit dem Titel `daten-importieren` aus. 
+2. Führe`View(lernende)` in der Konsole aus und schaue dir die Daten an.
+3. Was glaubst du wird mit der Zeile `locale = locale(encoding = "ISO-8859-1")` erreicht?
+4. Führe den Code-chunk mit dem Titel `daten-eingrenzen` aus.
+
+```{r daten-importieren}
+# Der Link zu den Daten wird hier als Objekt gespeichert und taucht oben rechts in "Environment" auf
+link <- "https://www.web.statistik.zh.ch/ogd/data/bista/ZH_Uebersicht_alle_Lernende.csv"
+
+# Hier wird nun das Objekt "link" genutzt um die CSV zu lesen
+lernende <- read_csv(file = link, 
+                     locale = locale(encoding = "ISO-8859-1"))
+```
+
+```{r daten-eingrenzen}
+
+# Ich habe die Daten hier auf das Jahr 2019 gefilterert und NAs entfernt
+lernende2019 <- lernende %>% 
+   filter(Jahr == 2019) %>% 
+   drop_na() # Die letzte Zeile 1960 weisst eine Zeile mit NAs auf
+
+```
+
+## Übung 2 - Daten beschreiben
+
+1. Nutze die dir bekannten Funktionen um das Objekt `lernende2019` zu erkunden.
+2. Wieviele Spalten hat der Datensatz?
+3. Wieviele Zeilen hat der Datensatz? 
+4. Nutze die Funktion `glimpse(lernende2019)` und beschreibe die Variablen Typen
+      - Numerisch oder nicht numerisch?
+      - Falls numerisch, diskret oder kontinuierlich?    
+      - Falls nicht numerisch, ordinal oder nicht ordinal? 
+
+```{r}
+
+glimpse(lernende2019)
+
+```
+
+## Übung 3 - Daten visualisieren
+
+1. Versuche diesen Plot zu reproduzieren (selbst zu erstellen).
+
+**Tipp: Nutze `geom_col()` und nicht `geom_bar()`**
+
+2. Was passiert wenn du versuchst diesen Plot mit `geom_bar()` zu erstellen?
+
+```{r, echo=FALSE}
+
+ggplot(lernende2019, aes(x = Stufe, y = Anzahl, fill = Nationalitaet)) +
+   geom_col() +
+   coord_flip() +
+   scale_y_continuous(breaks = seq(0, 100000, 10000)) +
+   scale_fill_viridis_d() +
+   labs(title = "Anzahl Schüler_innen",
+        subtitle = "Kanton Zürich, 2019",
+        caption = "Daten: https://opendata.swiss/de/dataset/ubersicht-uber-alle-lernenden-im-kanton-zurich") +
+   theme_minimal() +
+   theme(legend.position = "bottom")
+
+```
+# Übung 4 - Daten eingrenzen
+
+Beginne mit dem `lernende2019` Dataframe und nutze die Pipe `%>%` um die Daten nur nach Beobachtungen mit den Schultypen Mittelschule und Volksschule zu filtern. Speichere den resultierenden Dataframe als ein neues Objekt mit dem Namen `lernende2019_ms_vs`. 
+
+```{r daten-eingrenzen}
+
+lernende2019_ms_vs <- lernende %>%
+  filter(Schultyp %in% c("Mittelschule", "Volksschule"))
+
+```
+
+# Übung 5 - Daten zusammenfassen
+
+Der folgende Code erstellt eine Häufigkeitstabelle für die Variable `Schultyp`.
+
+1. Was gibt die Variable `Anzahl` genau an?
+2. Warum ist dies nicht die Anzahl Schüler_innen pro Schultyp?
+3. Was muss gemacht werden damit 
+
+```{r}
+lernende2019 %>% 
+   group_by(Schultyp) %>% 
+   count(wt = Anzahl)
+   summarise(
+      Anzahl = count(wt = Anzahl)
+   )
+```
 
 
+Erstelle zwei Dataframes:
 
-
+1. Beginne mit dem dataframe `lernende2019` und summiere die Anzahl Schüler für jeden Schultyp. **Tipp: Achte auf das Argument**
 
 # Übungen
 
@@ -63,19 +159,19 @@ Nutze die dir bekannten Funktionen um die Daten zu erkunden.
 ### Kapitel - 5.5.2 Exercises
 
 1. Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
-  Convert them to a more convenient representation of number of minutes since midnight.
-  
+Convert them to a more convenient representation of number of minutes since midnight.
+
 2. Compare `air_time` with `arr_time - dep_time`.
-   What do you expect to see?
-   What do you see?
-   What do you need to do to fix it?
+What do you expect to see?
+What do you see?
+What do you need to do to fix it?
 
 3. Compare `dep_time`, `sched_dep_time`, and `dep_delay`.
-   How would you expect those three numbers to be related?
+How would you expect those three numbers to be related?
 
 4. Find the 10 most delayed flights using a ranking function.
-   How do you want to handle ties?
-   Carefully read the documentation for `min_rank()`.
+How do you want to handle ties?
+Carefully read the documentation for `min_rank()`.
 
 5. What does `1:3 + 1:10` return?
-   Why?
+Why?
