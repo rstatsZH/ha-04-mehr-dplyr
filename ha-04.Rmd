@@ -25,7 +25,6 @@ library(tidyr)
 
 ```
 
-
 # Tastaturkürzel
 
 Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
@@ -36,25 +35,57 @@ Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
 - **Die Pipe (%>%):** Ctrl + Shift + M
 - **Der Zuweisungs-Operator (<-)**: Alt + -
 
-# Daten 
+# Übungen - Teil 1 - R for Data Science
 
-## Daten: nycflights
+## Übung 1 - Daten erkunden
 
-Nutze die dir bekannten Funktionen um die Daten zu erkunden.
+**Data Package `{nycflights13}`**
 
 ```{r}
 
+
 ```
 
-## Daten: Übersicht über alle Lernenden im Kanton Zürich
+## Übung 2 - dplyr::mutate() 
 
-Ein Datensatz publiziert von der [Bildungsstatitik Kanton Zürich](https://pub.bista.zh.ch/de/). Der Datensatz ist öffentlich [auf opendata.swiss verfügbar](https://opendata.swiss/de/dataset/ubersicht-uber-alle-lernenden-im-kanton-zurich) und wir auch auf einer Seite der Bildungsstatistik selbst mit [Visualisierungen dargestellt](https://pub.bista.zh.ch/de/zahlen-und-fakten/sdl/uebersicht-ueber-alle-lernenden/auswertungen-in-absoluten-zahlen/.
+### Notizen / Fragen - Kapitel 5.5
 
-# Übungen
+**Lösche diesen Text und füge deine Notizen und Fragen hinzu**
+
+### Daten erkunden - `{nycflights13}`
+
+Die Daten aus diesem Package hast du bereits in der Hausaufgabe 3 kennengelernt. Es lohnt sich trotzdem diese hier nochmals mit den dir bekannten Funktionen zu erkunden. 
+
+```{r}
+
+
+```
+
+### Kapitel - 5.5.2 Exercises
+
+**Falls diese Übungen zu herausfordernd sind, kannst du diese auch überspringen. Wir werden uns die Lösungen in der nächsten Woche anschauen. Wichtig ist jedoch, dass du das Kapitel liest, dir Fragen notierst und diese in den Slack Channel schreibst.**
+
+1. Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
+Convert them to a more convenient representation of number of minutes since midnight.
+
+2. Compare `air_time` with `arr_time - dep_time`.
+What do you expect to see?
+What do you see?
+What do you need to do to fix it?
+
+3. Compare `dep_time`, `sched_dep_time`, and `dep_delay`.
+How would you expect those three numbers to be related?
+
+4. Find the 10 most delayed flights using a ranking function.
+How do you want to handle ties?
+Carefully read the documentation for `min_rank()`.
+
+5. What does `1:3 + 1:10` return?
+Why?
+
+# Übungen - Teil 2 - Lernende im Kanton Zürich
 
 ## Übung 1 - Daten Importieren
-
-Ich habe die Daten für dich bereits importiert, auf das Jahr 2019 eingeschränkt und die NAs entfernt. Wir werden in allen Übungen ab Übung 2 mit dem Objekt `lernende2019` arbeiten.
 
 1. Führe den Code-chunk mit dem Titel `daten-importieren` aus. 
 2. Führe`View(lernende)` in der Konsole aus und schaue dir die Daten an.
@@ -89,89 +120,159 @@ lernende2019 <- lernende %>%
       - Falls numerisch, diskret oder kontinuierlich?    
       - Falls nicht numerisch, ordinal oder nicht ordinal? 
 
-```{r}
+```{r daten-beschreiben}
 
-glimpse(lernende2019)
+
 
 ```
 
 ## Übung 3 - Daten visualisieren
 
-1. Versuche diesen Plot zu reproduzieren (selbst zu erstellen).
+1. Versuche den Plot aus der Beschreibung für die Hausaufgabe zu rekonstruieren. 
 
-**Tipp: Nutze `geom_col()` und nicht `geom_bar()`**
+```{r daten-visualisieren}
+
+
+```
 
 2. Was passiert wenn du versuchst diesen Plot mit `geom_bar()` zu erstellen?
 
-```{r, echo=FALSE}
+```{r daten-visualisieren-bar}
 
-ggplot(lernende2019, aes(x = Stufe, y = Anzahl, fill = Nationalitaet)) +
-   geom_col() +
-   coord_flip() +
-   scale_y_continuous(breaks = seq(0, 100000, 10000)) +
-   scale_fill_viridis_d() +
-   labs(title = "Anzahl Schüler_innen",
-        subtitle = "Kanton Zürich, 2019",
-        caption = "Daten: https://opendata.swiss/de/dataset/ubersicht-uber-alle-lernenden-im-kanton-zurich") +
-   theme_minimal() +
-   theme(legend.position = "bottom")
+
 
 ```
-# Übung 4 - Daten eingrenzen
 
-Beginne mit dem `lernende2019` Dataframe und nutze die Pipe `%>%` um die Daten nur nach Beobachtungen mit den Schultypen Mittelschule und Volksschule zu filtern. Speichere den resultierenden Dataframe als ein neues Objekt mit dem Namen `lernende2019_ms_vs`. 
+## Übung 4 - Daten eingrenzen
 
-```{r daten-eingrenzen}
+1. Beginne mit dem `lernende2019` Dataframe und nutze die Pipe `%>%` und die Funktion `filter()` um die Daten auf Beobachtungen mit den Schultypen Mittelschule und Volksschule eionzugrenzen. Speichere den resultierenden Dataframe in deinem Environment als ein neues Objekt mit dem Namen `lernende2019_ms_vs`. 
 
-lernende2019_ms_vs <- lernende %>%
+```{r daten-eingrenzen2}
+
+lernende2019_ms_vs <- lernende2019 %>%
   filter(Schultyp %in% c("Mittelschule", "Volksschule"))
 
 ```
 
-# Übung 5 - Daten zusammenfassen
-
-Der folgende Code erstellt eine Häufigkeitstabelle für die Variable `Schultyp`.
-
-1. Was gibt die Variable `Anzahl` genau an?
-2. Warum ist dies nicht die Anzahl Schüler_innen pro Schultyp?
-3. Was muss gemacht werden damit 
+2. Beginne mit dem neuen Objekt `lernende2019_ms_vs`, nutze die Pipe, und grenze den Dataframe auf privat finanzierte, ausländische Schüler_innen in der Primarstufe 1-2 ein.
 
 ```{r}
+
+lernende2019_ms_vs %>% 
+   filter(Nationalitaet == "Ausländer",
+          Stufe == "Primarstufe 1-2",
+          Finanzierung == "priv")
+
+```
+
+## Übung 5 - Daten zusammenfassen
+
+Führe die beiden Code-chunks aus und betrachte den resultierenden Output. Dieser wird entweder in deiner Console angezeigt, oder unterhalb des Code-chunks. Der Output der Code Sequenzen ist identisch.
+
+1. Was gibt die Spalte `n` an? 
+2. Warum ist in der Spalte `n` nicht die Anzahl Schüler_innen pro Schultyp angegeben?
+3. Was muss gemacht werden damit in der Spalte `n` die Anzahl Schüler_innen pro Schultyp angezeigt wird? Versuche den Code so anzupassen dass du das Ergebnis aus der Beschreibung der Hausaufgabe bekommst. 
+
+```{r anzahl1}
+# Häufigkeitstabelle 1 - Zusammenfassen mit count()
+lernende2019 %>% 
+   count(Schultyp)
+```
+
+```{r anzahl2}
+# Häufigkeitstabelle 2 - Zusammfassen mit group_by %>% summarise()
 lernende2019 %>% 
    group_by(Schultyp) %>% 
-   count(wt = Anzahl)
    summarise(
-      Anzahl = count(wt = Anzahl)
+      n = n()
    )
 ```
 
+## Übung 6 - Kurzanalyse 
 
-Erstelle zwei Dataframes:
+Der Code für diese Aufgabe ist vorbereitet. Es geht hier darum die Lücken auszufüllen. Jede Lücke hat einen Platzhalter mit drei Unterstrichen ___, unabhänig davon wie viele Zeichen ersetzt werden sollen. 
 
-1. Beginne mit dem dataframe `lernende2019` und summiere die Anzahl Schüler für jeden Schultyp. **Tipp: Achte auf das Argument**
+Beginne mit dem `lernende` Dataframe und erstelle eine Code Sequenz mit folgenden Abschnitten:
 
-# Übungen
+1. Entfernde die NAs von dem Dataframe. Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
+2. Nutze `group_by()` und `summarise()` um das Total der Schüler_innen pro Jahr zu erhalten und gebe der neuen Spalte den Namen "Total". Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
+3. Nutze die Funktion `mutate()` um eine neue Spalte names "Differenz" zu erstellen. Diese Spalte soll die Differenz des Total der Anzahl Schüler_innen zwischen den Jahren angeben. **Tipp: Nutze die Funktion `lag()`**
+4. Nutze die Funktion `mutate()` in Kombination mit der Funktion `case_when()` um eine neue Spalte mit dem Namen "Veraenderung" zu erstellen. Diese Spalte soll angeben ob die Anzahl Schüler_innen im jeweiligen Jahr zugenommen oder abgenommen habt. 
 
-## Übung 4 - dplyr::mutate() 
+```{r, eval=FALSE}
 
-### Notizen / Fragen - Kapitel 5.5
+lernende ___  
+   drop____ %>% 
+   group_by(___) %>% 
+   summarise(
+      Total = ___(___)
+   ) %>% 
+   mutate(
+      Differenz = Total - ___(Total)
+   ) %>% 
+   mutate(
+      Veraenderung = case_when(
+         Differenz > ___ ~ "Zunahme",
+         Differenz < ___ ~ "Abnahme"
+      )
+   )
 
-### Kapitel - 5.5.2 Exercises
 
-1. Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
-Convert them to a more convenient representation of number of minutes since midnight.
+```
 
-2. Compare `air_time` with `arr_time - dep_time`.
-What do you expect to see?
-What do you see?
-What do you need to do to fix it?
+# Übungen - Teil 3 - R for Data Science - (Bonus)
 
-3. Compare `dep_time`, `sched_dep_time`, and `dep_delay`.
-How would you expect those three numbers to be related?
+## Übung 1 - Grouped summaries with summarise()
 
-4. Find the 10 most delayed flights using a ranking function.
-How do you want to handle ties?
-Carefully read the documentation for `min_rank()`.
+### Notizen / Fragen - Kapitel 5.6
 
-5. What does `1:3 + 1:10` return?
-Why?
+### Kapitel - 5.6.7 Exercises
+
+1.  Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:
+
+- A flight is 15 minutes early 50% of the time, and 15 minutes late 50% of the time.
+- A flight is always 10 minutes late.
+- A flight is 30 minutes early 50% of the time, and 30 minutes late 50% of the time.
+- 99% of the time a flight is on time. 1% of the time it's 2 hours late.
+
+Which is more important: arrival delay or departure delay?
+
+2. Come up with another approach that will give you the same output as `not_cancelled %>% count(dest)` and `not_cancelled %>% count(tailnum, wt = distance)` (without using `count()`).
+
+3. Our definition of cancelled flights (`is.na(dep_delay) | is.na(arr_delay)` ) is slightly suboptimal. Why? Which is the most important column?
+
+4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+5. Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about `flights %>% group_by(carrier, dest) %>% summarise(n())`)
+
+6. What does the `sort` argument to `count()` do. When might you use it?
+
+## Übung 2 - Grouped mutates (and filters)
+
+### Notizen / Fragen - Kapitel 5.7
+
+### Kapitel - 5.7.1 Exercises
+
+1. Refer back to the lists of useful mutate and filtering functions.
+   Describe how each operation changes when you combine it with grouping.
+
+2. Which plane (`tailnum`) has the worst on-time record?
+
+3. What time of day should you fly if you want to avoid delays as much as possible?
+
+4. For each destination, compute the total minutes of delay.
+   For each flight, compute the proportion of the total delay for its destination.
+
+5. Delays are typically temporally correlated: even once the problem that caused the initial delay has been resolved, later flights are delayed to allow earlier flights to leave.
+   Using `lag()`, explore how the delay of a flight is related to the delay of the immediately preceding flight.
+
+6. Look at each destination.
+   Can you find flights that are suspiciously fast?
+   (i.e. flights that represent a potential data entry error).
+   Compute the air time of a flight relative to the shortest flight to that destination.
+   Which flights were most delayed in the air?
+
+7. Find all destinations that are flown by at least two carriers.
+   Use that information to rank the carriers.
+
+8. For each plane, count the number of flights before the first delay of greater than 1 hour.
