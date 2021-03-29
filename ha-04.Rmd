@@ -61,9 +61,9 @@ Die Daten aus diesem Package hast du bereits in der Hausaufgabe 3 kennengelernt.
 
 ```
 
-### Kapitel - 5.5.2 Exercises
+### Kapitel - 5.5.2 Exercises (Bonus)
 
-**Falls diese Übungen zu herausfordernd sind, kannst du diese auch überspringen. Wir werden uns die Lösungen in der nächsten Woche anschauen. Wichtig ist jedoch, dass du das Kapitel liest, dir Fragen notierst und diese in den Slack Channel schreibst.**
+**Diese Übungen kannst du auch überspringen. Sie sind eher komplizierter. Falls Bedarf besteht, können wir uns die Lösungen in einer zusätzlichen Lektion anschauen. Wichtig ist jedoch, dass du das Kapitel liest, dir Fragen notierst und diese in den Slack Channel schreibst.**
 
 1. Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
 Convert them to a more convenient representation of number of minutes since midnight.
@@ -197,7 +197,7 @@ Beginne mit dem `lernende` Dataframe und erstelle eine Code Sequenz mit folgende
 1. Entfernde die NAs von dem Dataframe. Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
 2. Nutze `group_by()` und `summarise()` um das Total der Schüler_innen pro Jahr zu erhalten und gebe der neuen Spalte den Namen "Total". Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
 3. Nutze die Funktion `mutate()` um eine neue Spalte names "Differenz" zu erstellen. Diese Spalte soll die Differenz des Total der Anzahl Schüler_innen zwischen den Jahren angeben. **Tipp: Nutze die Funktion `lag()`**
-4. Nutze die Funktion `mutate()` in Kombination mit der Funktion `case_when()` um eine neue Spalte mit dem Namen "Veraenderung" zu erstellen. Diese Spalte soll angeben ob die Anzahl Schüler_innen im jeweiligen Jahr zugenommen oder abgenommen habt. 
+4. **Lernt ihr nächste Woche:** Nutze die Funktion `mutate()` in Kombination mit der Funktion `case_when()` um eine neue Spalte mit dem Namen "Veraenderung" zu erstellen. Diese Spalte soll angeben ob die Anzahl Schüler_innen im jeweiligen Jahr zugenommen oder abgenommen habt. 
 
 ```{r, eval=FALSE}
 
@@ -212,8 +212,8 @@ lernende ___
    ) %>% 
    mutate(
       Veraenderung = case_when(
-         Differenz > ___ ~ "Zunahme",
-         Differenz < ___ ~ "Abnahme"
+         Differenz > 0 ~ "Zunahme",
+         Differenz < 0 ~ "Abnahme"
       )
    )
 
