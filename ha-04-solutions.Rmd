@@ -1,0 +1,310 @@
+---
+title: "Hausaufgabe 04 - Mehr {dplyr}"
+author: "Füge deinen Namen hier hinzu"
+date: "Füge das Datum hier hinzu"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+# Ich habe hier ein paar Standardeinstellungen für dich vorgenommen
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Lade Packages
+
+```{r lade-packages, message=FALSE}
+
+library(nycflights13)  
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+
+```
+
+# Tastaturkürzel
+
+Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
+
+- **Einen neuen Code-chunk hinzufügen:** Ctrl + Alt + I
+- **Code "Zeile für Zeile" innerhalb eines Code-chunks ausführen:** Ctrl + Enter
+- **Den gesamten Code-chunk ausführen:** Ctrl + Shift + Enter
+- **Die Pipe (%>%):** Ctrl + Shift + M
+- **Der Zuweisungs-Operator (<-)**: Alt + -
+
+# Übungen - Teil 1 - R for Data Science
+
+## Übung 1 - Daten erkunden
+
+**Data Package `{nycflights13}`**
+
+```{r}
+
+
+```
+
+## Übung 2 - dplyr::mutate() 
+
+### Notizen / Fragen - Kapitel 5.5
+
+**Lösche diesen Text und füge deine Notizen und Fragen hinzu**
+
+### Daten erkunden - `{nycflights13}`
+
+Die Daten aus diesem Package hast du bereits in der Hausaufgabe 3 kennengelernt. Es lohnt sich trotzdem diese hier nochmals mit den dir bekannten Funktionen zu erkunden. 
+
+```{r}
+
+
+```
+
+### Kapitel - 5.5.2 Exercises (Bonus)
+
+**Diese Übungen kannst du auch überspringen. Sie sind eher komplizierter. Falls Bedarf besteht, können wir uns die Lösungen in einer zusätzlichen Lektion anschauen. Wichtig ist jedoch, dass du das Kapitel liest, dir Fragen notierst und diese in den Slack Channel schreibst.**
+
+Lösungen für Übungen aus R for Data Science gibt es in diesem Lösungsbuch: https://jrnold.github.io/r4ds-exercise-solutions/transform.html#add-new-variables-with-mutate
+
+1. Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
+Convert them to a more convenient representation of number of minutes since midnight.
+
+2. Compare `air_time` with `arr_time - dep_time`.
+What do you expect to see?
+What do you see?
+What do you need to do to fix it?
+
+3. Compare `dep_time`, `sched_dep_time`, and `dep_delay`.
+How would you expect those three numbers to be related?
+
+4. Find the 10 most delayed flights using a ranking function.
+How do you want to handle ties?
+Carefully read the documentation for `min_rank()`.
+
+5. What does `1:3 + 1:10` return?
+Why?
+
+# Übungen - Teil 2 - Lernende im Kanton Zürich
+
+## Übung 1 - Daten Importieren
+
+1. Führe den Code-chunk mit dem Titel `daten-importieren` aus. 
+2. Führe`View(lernende)` in der Konsole aus und schaue dir die Daten an.
+3. Was glaubst du wird mit der Zeile `locale = locale(encoding = "ISO-8859-1")` erreicht?
+
+Über das Argument "locale" in `read_csv()` definiert Standardeinstellungen, welche je nach Ort verschieden sind. Standardmässig werden hier US Standards genommen, aber dies kann mittels der Funktion "locale()" angepasst werden (siehe ?read_csv unter **Arguments:** "locale"). Wenn wir uns die Hilfe Datei der Funktion mit ?locale anschauen, sehen wir verschiedene Argumente. Relevant ist das Argument "encoding", welches kontrolliert wie eine Datei im `readr` Package codiert wird. Der Standard hier ist UTF-8. Umlaute werden hier nicht korrekt eingelesenm weshalb hier der "ISO-8859-1" Standard genutzt wurde um die Daten zu enkodieren. Dafür habe ich [hier Hilfe gefunden](https://github.com/tidyverse/readr/issues/528), nachdem ich die Frage "readr read_csv umlaut encoding german" in einer Suchmaschine eingegeben habe. 
+
+4. Führe den Code-chunk mit dem Titel `daten-eingrenzen` aus.
+
+```{r daten-importieren}
+# Der Link zu den Daten wird hier als Objekt gespeichert und taucht oben rechts in "Environment" auf
+link <- "https://www.web.statistik.zh.ch/ogd/data/bista/ZH_Uebersicht_alle_Lernende.csv"
+
+# Hier wird nun das Objekt "link" genutzt um die CSV zu lesen
+lernende <- read_csv(file = link, 
+                     locale = locale(encoding = "ISO-8859-1"))
+
+```
+
+```{r daten-eingrenzen}
+
+# Ich habe die Daten hier auf das Jahr 2019 gefilterert und NAs entfernt
+lernende2019 <- lernende %>% 
+   filter(Jahr == 2019) %>% 
+   drop_na() # Die letzte Zeile 1960 weisst eine Zeile mit NAs auf
+
+```
+
+## Übung 2 - Daten beschreiben
+
+1. Nutze die dir bekannten Funktionen um das Objekt `lernende2019` zu erkunden.
+2. Wieviele Spalten hat der Datensatz?
+3. Wieviele Zeilen hat der Datensatz? 
+4. Nutze die Funktion `glimpse(lernende2019)` und beschreibe die Variablen Typen
+      - Numerisch oder nicht numerisch?
+      - Falls numerisch, diskret oder kontinuierlich?    
+      - Falls nicht numerisch, ordinal oder nicht ordinal? 
+
+```{r daten-beschreiben}
+
+dim(lernende2019)
+nrow(lernende2019)
+ncol(lernende2019)
+glimpse(lernende2019)
+```
+
+## Übung 3 - Daten visualisieren
+
+1. Versuche den Plot aus der Beschreibung für die Hausaufgabe zu rekonstruieren. 
+
+```{r daten-visualisieren}
+
+ggplot(lernende2019, aes(x = Stufe, y = Anzahl, fill = Nationalitaet)) +
+   geom_col() +
+   coord_flip() +
+   scale_y_continuous(breaks = seq(0, 100000, 10000)) +
+   scale_fill_viridis_d() +
+   labs(title = "Anzahl Schüler_innen",
+        subtitle = "Kanton Zürich, 2019",
+        fill = "Nationalität",
+        caption = "Daten: https://opendata.swiss/de/dataset/ubersicht-uber-alle-lernenden-im-kanton-zurich") +
+   theme_minimal() +
+   theme(legend.position = "bottom", panel.grid.major.y = element_blank())
+
+```
+
+2. Was passiert wenn du versuchst diesen Plot mit `geom_bar()` zu erstellen?
+
+- Fehlermeldung: stat_count() can only have an x or y aesthetic.
+- Das Geom geom_bar() führt eine Transformation mittels der Funktion stat_count() aus. Diese kann nur mit einer Variablen ausgeführt werden. 
+
+```{r daten-visualisieren-bar}
+
+#ggplot(lernende2019, aes(x = Stufe, y = Anzahl, fill = Nationalitaet)) +
+#   geom_bar() 
+
+```
+
+## Übung 4 - Daten eingrenzen
+
+1. Beginne mit dem `lernende2019` Dataframe und nutze die Pipe `%>%` und die Funktion `filter()` um die Daten auf Beobachtungen mit den Schultypen Mittelschule und Volksschule eionzugrenzen. Speichere den resultierenden Dataframe in deinem Environment als ein neues Objekt mit dem Namen `lernende2019_ms_vs`. 
+
+```{r daten-eingrenzen2}
+
+lernende2019_ms_vs <- lernende2019 %>%
+  filter(Schultyp %in% c("Mittelschule", "Volksschule"))
+
+```
+
+2. Beginne mit dem neuen Objekt `lernende2019_ms_vs`, nutze die Pipe, und grenze den Dataframe auf privat finanzierte, ausländische Schüler_innen in der Primarstufe 1-2 ein.
+
+```{r}
+
+lernende2019_ms_vs %>% 
+   filter(Nationalitaet == "Ausländer",
+          Stufe == "Primarstufe 1-2",
+          Finanzierung == "priv")
+
+```
+
+## Übung 5 - Daten zusammenfassen
+
+Führe die beiden Code-chunks aus und betrachte den resultierenden Output. Dieser wird entweder in deiner Console angezeigt, oder unterhalb des Code-chunks. Der Output der Code Sequenzen ist identisch.
+
+1. Was gibt die Spalte `n` an? 
+
+Die Spalte "n" gibt die Anzahl Beobachtungen (Reihen) des Datensatzes an. Das Objekt `lernende2019` hat 86 Beobachtungen (Reihen) und diese werden gruppiert über die Variable "Schultyp" gezählt.
+
+2. Warum ist in der Spalte `n` nicht die Anzahl Schüler_innen pro Schultyp angegeben?
+
+Die Anzahl in `lernende2019` steckt in der Variable "Anzahl". Wir haben jedoch die Beobachtungen im Datensatz gezählt.
+
+3. Was muss gemacht werden damit in der Spalte `n` die Anzahl Schüler_innen pro Schultyp angezeigt wird? Versuche den Code so anzupassen dass du das Ergebnis aus der Beschreibung der Hausaufgabe bekommst. 
+
+```{r anzahl1}
+# Häufigkeitstabelle 1 - Zusammenfassen mit count()
+lernende2019 %>% 
+   count(Schultyp, wt = Anzahl)
+```
+
+```{r anzahl2}
+# Häufigkeitstabelle 2 - Zusammfassen mit group_by %>% summarise()
+lernende2019 %>% 
+   group_by(Schultyp) %>% 
+   summarise(
+      n = sum(Anzahl)
+   )
+```
+
+## Übung 6 - Kurzanalyse 
+
+Der Code für diese Aufgabe ist vorbereitet. Es geht hier darum die Lücken auszufüllen. Jede Lücke hat einen Platzhalter mit drei Unterstrichen ___, unabhänig davon wie viele Zeichen ersetzt werden sollen. 
+
+Beginne mit dem `lernende` Dataframe und erstelle eine Code Sequenz mit folgenden Abschnitten:
+
+1. Entfernde die NAs von dem Dataframe. Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
+2. Nutze `group_by()` und `summarise()` um das Total der Schüler_innen pro Jahr zu erhalten und gebe der neuen Spalte den Namen "Total". Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
+3. Nutze die Funktion `mutate()` um eine neue Spalte names "Differenz" zu erstellen. Diese Spalte soll die Differenz des Total der Anzahl Schüler_innen zwischen den Jahren angeben. **Tipp: Nutze die Funktion `lag()`**
+4. **Lernt ihr nächste Woche:** Nutze die Funktion `mutate()` in Kombination mit der Funktion `case_when()` um eine neue Spalte mit dem Namen "Veraenderung" zu erstellen. Diese Spalte soll angeben ob die Anzahl Schüler_innen im jeweiligen Jahr zugenommen oder abgenommen habt. 
+
+```{r, eval=TRUE}
+
+lernende %>%   
+   drop_na %>% 
+   group_by(Jahr) %>% 
+   summarise(
+      Total = sum(Anzahl)
+   ) %>% 
+   mutate(
+      Differenz = Total - lag(Total)
+   ) %>% 
+   mutate(
+      Veraenderung = case_when(
+         Differenz > 0 ~ "Zunahme",
+         Differenz < 0 ~ "Abnahme"
+      )
+   )
+
+```
+
+# Übungen - Teil 3 - R for Data Science - (Bonus)
+
+## Übung 1 - Grouped summaries with summarise()
+
+### Notizen / Fragen - Kapitel 5.6
+
+### Kapitel - 5.6.7 Exercises
+
+Lösungen für Übungen aus R for Data Science gibt es in diesem Lösungsbuch: https://jrnold.github.io/r4ds-exercise-solutions/transform.html#add-new-variables-with-mutate
+
+1.  Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:
+
+- A flight is 15 minutes early 50% of the time, and 15 minutes late 50% of the time.
+- A flight is always 10 minutes late.
+- A flight is 30 minutes early 50% of the time, and 30 minutes late 50% of the time.
+- 99% of the time a flight is on time. 1% of the time it's 2 hours late.
+
+Which is more important: arrival delay or departure delay?
+
+2. Come up with another approach that will give you the same output as `not_cancelled %>% count(dest)` and `not_cancelled %>% count(tailnum, wt = distance)` (without using `count()`).
+
+3. Our definition of cancelled flights (`is.na(dep_delay) | is.na(arr_delay)` ) is slightly suboptimal. Why? Which is the most important column?
+
+4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+5. Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about `flights %>% group_by(carrier, dest) %>% summarise(n())`)
+
+6. What does the `sort` argument to `count()` do. When might you use it?
+
+## Übung 2 - Grouped mutates (and filters)
+
+### Notizen / Fragen - Kapitel 5.7
+
+### Kapitel - 5.7.1 Exercises
+
+Lösungen für Übungen aus R for Data Science gibt es in diesem Lösungsbuch: https://jrnold.github.io/r4ds-exercise-solutions/transform.html#add-new-variables-with-mutate
+
+1. Refer back to the lists of useful mutate and filtering functions.
+   Describe how each operation changes when you combine it with grouping.
+
+2. Which plane (`tailnum`) has the worst on-time record?
+
+3. What time of day should you fly if you want to avoid delays as much as possible?
+
+4. For each destination, compute the total minutes of delay.
+   For each flight, compute the proportion of the total delay for its destination.
+
+5. Delays are typically temporally correlated: even once the problem that caused the initial delay has been resolved, later flights are delayed to allow earlier flights to leave.
+   Using `lag()`, explore how the delay of a flight is related to the delay of the immediately preceding flight.
+
+6. Look at each destination.
+   Can you find flights that are suspiciously fast?
+   (i.e. flights that represent a potential data entry error).
+   Compute the air time of a flight relative to the shortest flight to that destination.
+   Which flights were most delayed in the air?
+
+7. Find all destinations that are flown by at least two carriers.
+   Use that information to rank the carriers.
+
+8. For each plane, count the number of flights before the first delay of greater than 1 hour.
