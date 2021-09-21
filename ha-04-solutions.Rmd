@@ -167,7 +167,7 @@ lernende2019 %>%
    )
 ```
 
-## Übung 6 - Kurzanalyse 
+## Übung 6 - Kurzanalyse (**Bonus**)
 
 Der Code für diese Aufgabe ist vorbereitet. Es geht hier darum die Lücken auszufüllen. Jede Lücke hat einen Platzhalter mit drei Unterstrichen ___, unabhänig davon wie viele Zeichen ersetzt werden sollen. 
 
