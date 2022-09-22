@@ -42,7 +42,6 @@ Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
 
 1. Führe den Code-chunk mit dem Titel `daten-importieren` aus. 
 2. Führe`View(lernende)` in der Konsole aus und schaue dir die Daten an.
-3. Was glaubst du wird mit der Zeile `locale = locale(encoding = "ISO-8859-1")` erreicht?
 4. Führe den Code-chunk mit dem Titel `daten-eingrenzen` aus.
 
 ```{r daten-importieren}
@@ -50,8 +49,7 @@ Ich habe hier nochmals die wichtigsten Tastaturkürzel für dich hinzugefügt
 link <- "https://www.web.statistik.zh.ch/ogd/data/bista/ZH_Uebersicht_alle_Lernende.csv"
 
 # Hier wird nun das Objekt "link" genutzt um die CSV zu lesen
-lernende <- read_csv(file = link, 
-                     locale = locale(encoding = "ISO-8859-1"))
+lernende <- read_csv(file = link)
 ```
 
 ```{r daten-eingrenzen}
@@ -105,7 +103,7 @@ lernende2019 <- lernende %>%
 
 ```
 
-2. Beginne mit dem neuen Objekt `lernende2019_ms_vs`, nutze die Pipe, und grenze den Dataframe auf privat finanzierte, ausländische Schüler_innen in der Primarstufe 1-2 ein.
+2. Beginne mit dem neuen Objekt `lernende2019_ms_vs`, nutze die Pipe, und grenze den Dataframe ein auf privat finanzierte Schüler_innen in der Primarstufe 1-2 mit ausländischer Staatsangehörigkeit.
 
 ```{r}
 
